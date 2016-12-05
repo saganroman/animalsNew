@@ -134,28 +134,38 @@
                 }
             });
 
+            $.ajax({
+                type: "GET",
+                url: "/getAnimals",
+                cache: false,
+                success: function (responce) {
 
-            <?php
-                    foreach ($animals as $animal)
-                    { ?>
+                    markersShow(responce);
 
-                    name = '{{$animal->name}}';
-            species = '{!!$animal->species->name!!}';
-            breed = '{!! $animal->breed->name !!}';
-            content = '<?php echo trim($animal->content); ?>';
-            photo = '{!!URL::asset('images')!!}/{{$animal->photo}}';
-            photo_s = '{!!URL::asset('images')!!}/s_{{$animal->photo}}';
-            position = '{!! $animal-> LatLn!!}';
-            coordinates = position.split(',');
-            Lat = +coordinates[0].trim();
-            Lng = +coordinates[1].trim();
+                }
+            });
 
-            var animalObject = new Animal(name, species, breed, content, photo, photo_s, Lat, Lng);
-            animalObject.draw();
+            function markersShow(str) {
+                var obj = JSON.parse(str);
+                for (var i = 0; i < obj.length; i++) {
+                    this.name = obj[i]["name"];
+                    this.species = obj[i]["species_id"];
+                    this.breed = obj[i]["breed_id"];
+                    this.content = obj[i]["content"];
+                    this.photo = '{!!URL::asset('images')!!}/' + obj[i]["photo"];
+                    this.photo_s = '{!!URL::asset('images')!!}/s_' + obj[i]["photo"];
+                    this.position = obj[i]["LatLn"];
+                    this.coordinates = position.split(',');
+                    this.Lat = +coordinates[0].trim();
+                    this.Lng = +coordinates[1].trim();
 
-            <?php }?>
+                    var animalObject = new Animal(this.name, this.species, this.breed, this.content, this.photo, this.photo_s, this.Lat, this.Lng);
+                    animalObject.draw();
+                }
+            }
 
- $("#InSpecies").change(function () {
+
+            $("#InSpecies").change(function () {
                 clearShapes();
                 var speciesId = $("#InSpecies").val();
                 clearMarkers();
@@ -173,22 +183,7 @@
                     url: "/getAnimalsBySpecies/" + speciesId,
                     cache: false,
                     success: function (responce) {
-                        var obj = JSON.parse(responce);
-                        for (var i = 0; i < obj.length; i++) {
-                            name = obj[i]["name"];
-                            species = obj[i]["species_id"];
-                            breed = obj[i]["breed_id"];
-                            content = obj[i]["content"];
-                            photo = '{!!URL::asset('images')!!}/' + obj[i]["photo"];
-                            photo_s = '{!!URL::asset('images')!!}/s_' + obj[i]["photo"];
-                            position = obj[i]["LatLn"];
-                            coordinates = position.split(',');
-                            Lat = +coordinates[0].trim();
-                            Lng = +coordinates[1].trim();
-
-                            var animalObject = new Animal(name, species, breed, content, photo, photo_s, Lat, Lng);
-                            animalObject.draw();
-                        }
+                      markersShow(responce);
                     }
                 });
 
@@ -204,22 +199,8 @@
                     url: "/getAnimalsByBreed/" + speciesId + "/" + breedId,
                     cache: false,
                     success: function (responce) {
-                        var obj = JSON.parse(responce);
-                        for (var i = 0; i < obj.length; i++) {
-                            name = obj[i]["name"];
-                            species = obj[i]["species_id"];
-                            breed = obj[i]["breed_id"];
-                            content = obj[i]["content"];
-                            photo = '{!!URL::asset('images')!!}/' + obj[i]["photo"];
-                            photo_s = '{!!URL::asset('images')!!}/s_' + obj[i]["photo"];
-                            position = obj[i]["LatLn"];
-                            coordinates = position.split(',');
-                            Lat = +coordinates[0].trim();
-                            Lng = +coordinates[1].trim();
 
-                            var animalObject = new Animal(name, species, breed, content, photo, photo_s, Lat, Lng);
-                            animalObject.draw();
-                        }
+                        markersShow(responce);
                     }
                 });
             })
@@ -246,23 +227,8 @@
                     url: "/checkoutCircle/" + center + "/" + radius + "/" + speciesId + "/" + breedId,
                     cache: false,
                     success: function (responce) {
-                        var obj = JSON.parse(responce);
-                        for (var i = 0; i < obj.length; i++) {
-                            name = obj[i]["name"];
-                            species = obj[i]["species_id"];
-                            breed = obj[i]["breed_id"];
-                            content = obj[i]["content"];
-                            photo = '{!!URL::asset('images')!!}/' + obj[i]["photo"];
-                            photo_s = '{!!URL::asset('images')!!}/s_' + obj[i]["photo"];
-                            position = obj[i]["LatLn"];
-                            coordinates = position.split(',');
-                            Lat = +coordinates[0].trim();
-                            Lng = +coordinates[1].trim();
 
-                            var animalObject = new Animal(name, species, breed, content, photo, photo_s, Lat, Lng);
-                            animalObject.draw();
-                        }
-
+                        markersShow(responce);
 
                     }
                 });
@@ -283,35 +249,15 @@
                 shapes[shapes.length - 1].setMap(map);
                 var speciesId = $("#InSpecies").val();
                 var breedId = $("#InBreed").val();
-                // vertexes= polyg.getPaths().b[0].b;
                 vertexes = polyg.getPaths().b[0].b.toString().replace(/\(/g, "[").replace(/\)/g, "]");
                 c = '[' + vertexes + ']'
-                // array=vertexes.toString();
-                // v=array.replace(/\(/g, "{").replace(/\)/g, "}");
-                console.log(c);
                 $.ajax({
                     type: "GET",
                     url: "/checkoutPolygon/" + c + "/" + speciesId + "/" + breedId,
                     cache: false,
                     success: function (responce) {
-                        var obj = JSON.parse(responce);
-                        for (var i = 0; i < obj.length; i++) {
-                            name = obj[i]["name"];
-                            species = obj[i]["species_id"];
-                            breed = obj[i]["breed_id"];
-                            content = obj[i]["content"];
-                            photo = '{!!URL::asset('images')!!}/' + obj[i]["photo"];
-                            photo_s = '{!!URL::asset('images')!!}/s_' + obj[i]["photo"];
-                            position = obj[i]["LatLn"];
-                            coordinates = position.split(',');
-                            Lat = +coordinates[0].trim();
-                            Lng = +coordinates[1].trim();
 
-                            var animalObject = new Animal(name, species, breed, content, photo, photo_s, Lat, Lng);
-                            animalObject.draw();
-                        }
-
-
+                        markersShow(responce);
                     }
                 });
 
