@@ -20,11 +20,18 @@ class HomeController extends Controller
     public function index()
     {
         $species = Species::all();
-        $animals = Animals::all();
+       // $animals = Animals::all()->toJson();
         // print_r($animals);
-        return view('welcome')->withAnimals($animals)->withSpecies($species);
+        //return view('welcome')->withAnimals($animals)->withSpecies($species);
+        return view('welcome')->withSpecies($species);
     }
-
+    public function getAnimals()
+    {
+        $animals = Animals::all()->toJson();
+        // print_r($animals);
+        // return view('welcome')->withAnimals($animals)->withSpecies($species);
+        return (string)$animals;
+    }
 
     public function getContact()
     {
@@ -151,7 +158,6 @@ class HomeController extends Controller
     public function getBreedPort($id)
     {
         $breeds = Breeds::where('species_id', $id)->get();
-        // echo "<option  selected >" . "Всі </option>";
         foreach ($breeds as $breed) {
             echo "<option value=" . '"' . $breed->id . '">' . $breed->name . "</option>";
         };
@@ -166,7 +172,6 @@ class HomeController extends Controller
         $br = '';
         if ($b and ($b !== "Всі")) {
             $animals = Animals::where('breed_id', $b)->get();
-            //   $animals=Animals::Find(1)->get();
             $br = Breeds::find($b);
         } else {
             if ($s !== "Всі") {
