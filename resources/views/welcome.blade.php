@@ -86,6 +86,7 @@
                     animalObject.draw();
                 }
             }
+
             function Graphics(name, species, breed, content, photo, photo_s, Lat, Lng) {
                 this.name = name;
                 this.species = species;
