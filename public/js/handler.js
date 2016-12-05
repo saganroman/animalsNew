@@ -1,64 +1,117 @@
-function initMap() {
-    var map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: -33.8688, lng: 151.2195},
-        zoom: 13
+$(document).ready(function () {
+
+    $("#InSpecies").change(function () {
+        var spID = $("#InSpecies").val();
+        $("#InBreed").attr('disabled', false);
+        $.ajax({
+            type: "GET",
+            url: "/getBreed/" + spID,
+            cache: false,
+            success: function (responce) {
+                $("#InBreed").html(responce);
+            }
+        });
+
+
     });
 
-    /* google.maps.event.addListener(map, 'click', function(event) {
-     addMarker(event.latLng, map);
-     });*/
-    var input = /** @type {!HTMLInputElement} */(
-        document.getElementById('pac-input'));
 
-    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+});
+//Увага ! markers- тварини-маркери, тобто масив що містить масив  тварин переданих з контроллера , а markers2- масив обєктів типу google.maps.marker
+var markers2 = [];
+var shapes = [];
 
 
-    var autocomplete = new google.maps.places.Autocomplete(input);
-    //autocomplete.bindTo('bounds', map);
-
-    var infowindow = new google.maps.InfoWindow();
-    var marker = new google.maps.Marker({
+//вивели drawingManager в центр
+    var drawingManager = new google.maps.drawing.DrawingManager({
         map: map,
-        anchorPoint: new google.maps.Point(0, -29)
+        drawingMode: google.maps.drawing.OverlayType.circle,
+        drawingControl: true,
+        drawingControlOptions: {
+            position: google.maps.ControlPosition.TOP_CENTER,
+            drawingModes: [
+                google.maps.drawing.OverlayType.CIRCLE,
+                google.maps.drawing.OverlayType.POLYGON,
+            ]
+        }
+    });
+//проходимось по всіх тваринах переданих з контроллера і вивводимо їх + інфовікна
+    for (var i = 0; i < animals.length; i++) {
+        var infowindow = new google.maps.InfoWindow({
+            content: '',
+            maxWidth: 200,
+        });
+     
+        animals2.push(marker);
+        infoString = "<div><img src=\"" + animals[i][4] + "\"><p><b>Кличка -</b>" + animals[i][0] + "</p>  <p> Вид-" + animals[i][1] + " <br> Порода- " + animals[i][2] + "  </p> " + animals[i][3] + " </div>";
+        bindInfoWindow(marker, map, infowindow, infoString);
+    }
+
+////////////////////////////////////////////////////////////////
+
+// Обробляємо намальовані фігури
+    google.maps.event.addListener(drawingManager, 'circlecomplete', function (circle) {
+
+        clearShapes();
+        krug = new google.maps.Circle({
+            center: circle.getCenter(),
+            radius: circle.getRadius(),
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.5,
+        });
+        shapes.push(krug);
+        circle.setMap(null);
+        shapes[shapes.length - 1].setMap(map);
+        clearMarkers();
+        for (var i = 0; i < animals.length; i++) {
+            coord = new google.maps.LatLng(markers2[i].position.lat(), markers2[i].position.lng());
+            if (google.maps.geometry.spherical.computeDistanceBetween(markers2[i].getPosition(), krug.getCenter()) <= krug.getRadius()) {
+                markers2[i].setMap(map);
+            }
+        }
     });
 
-    autocomplete.addListener('place_changed', function () {
-        infowindow.close();
-        marker.setVisible(false);
-        var place = autocomplete.getPlace();
-        /*  if (!place.geometry) {
-         window.alert("Autocomplete's returned place contains no geometry");
-         return;
-         }*/
+    google.maps.event.addListener(drawingManager, 'polygoncomplete', function (polyg) {
+        clearShapes();
 
-        // If the place has a geometry, then present it on a map.
-        /*if (place.geometry.viewport) {
-         map.fitBounds(place.geometry.viewport);
-         } else {*/
-        map.setCenter(place.geometry.location);
-        map.setZoom(12);  // Why 17? Because it looks good.
-        // }
-        marker.setIcon(/** @type {google.maps.Icon} */({
-            url: place.icon,
-            size: new google.maps.Size(71, 71),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(17, 34),
-            scaledSize: new google.maps.Size(35, 35)
-        }));
-        marker.setPosition(place.geometry.location);
-        marker.setVisible(true);
-        /*   var address = '';
-         if (place.address_components) {
-         address = [
-         (place.address_components[0] && place.address_components[0].short_name || ''),
-         (place.address_components[1] && place.address_components[1].short_name || ''),
-         (place.address_components[2] && place.address_components[2].short_name || '')
-         ].join(' ');
-         }
-         */
-
+        draw = new google.maps.Polygon({
+            paths: polyg.getPaths(),
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#FF0000',
+            fillOpacity: 0.35,
+        });
+        shapes.push(polyg);
+        polyg.setMap(null);
+        shapes[shapes.length - 1].setMap(map);
+        clearMarkers();
+        for (var i = 0; i < markers2.length; i++) {
+            coord = new google.maps.LatLng(markers2[i].position.lat(), markers2[i].position.lng());
+            if (google.maps.geometry.poly.containsLocation(coord, draw)) {
+                markers2[i].setMap(map);
+            }
+        }
     });
+};
 
-
+// *******************************************************************
+function bindInfoWindow(marker, map, infowindow, description) {
+    marker.addListener('click', function () {
+        infowindow.setContent(description);
+        infowindow.open(map, this);
+    });
 }
+//********************************************************************
 
+
+function clearMarkers() {
+    for (var i = 0; i < animals.length; i++) {
+        markers2[i].setMap(null);
+    }
+}
+function clearShapes() {
+    for (var i = 0; i < shapes.length; i++) {
+        shapes[i].setMap(null);
+    }
+}

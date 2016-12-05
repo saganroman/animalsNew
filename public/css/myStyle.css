@@ -2,9 +2,15 @@
     width: 100%;
     height: 500px;
 }
+
 body {
     font-family: 'Lato';
 }
+
 .fa-btn {
     margin-right: 6px;
+}
+
+.myBtn {
+    float: right;
 }

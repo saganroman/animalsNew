@@ -13,7 +13,7 @@
         <div class="collapse navbar-collapse" id="app-navbar-collapse">
             <!-- Left Side Of Navbar -->
             <ul class="nav navbar-nav">
-                <li><a href="{{ url('/home') }}">Контакти</a></li>
+                <li><a href="{{ url('/contacts') }}">Контакти</a></li>
             </ul>
 
             <!-- Right Side Of Navbar -->
@@ -24,11 +24,12 @@
                     <li><a href="{{ url('/register') }}">Реєстрація</a></li>
                 @else
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                            {{ Auth::user()->name }} <span class="caret"></span>
+                        <a href="/portfolio" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                            {{ Auth::user()->name }} <span class="caret"> </span>
                         </a>
 
                         <ul class="dropdown-menu" role="menu">
+                            <li><a href="{{ url('/portfolio') }}"><i class="fa fa-btn "></i>Подати заявку</a></li>
                             <li><a href="{{ url('/logout') }}"><i class="fa fa-btn fa-sign-out"></i>Вийти</a></li>
                         </ul>
                     </li>

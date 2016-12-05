@@ -14,7 +14,8 @@ class CreateAnimalsTable extends Migration
             $table->integer('breed_id');
             $table->string('content');
             $table->string('photo');
-            $table->string('addpress');
+            $table->string('address');
+            $table->string('LatLn');
         });
     }
 
