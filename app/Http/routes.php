@@ -17,4 +17,14 @@ Route::get('/', function () {
 
 Route::auth();
 
-Route::get('/home', 'HomeController@index');
+Route::get('/', 'HomeController@index');
+Route::get('/contacts', 'HomeController@getContact');
+Route::get('/portfolio', 'HomeController@getPortfolio');
+Route::get('/getBreed/{id}', 'HomeController@getBreed');
+Route::get('/getBreedPort/{id}', 'HomeController@getBreedPort');
+Route::get('/getAnimalsBySpecies/{id}', 'HomeController@getAnimalsBySpecies');
+Route::get('/getAnimalsByBreed/{sId}/{bId}', 'HomeController@getAnimalsByBreed');
+Route::get('/checkoutCircle/{center}/{radius}/{sId}/{bId}', 'HomeController@checkoutCircle');
+Route::get('/checkoutPolygon/{vertexes}/{sId}/{bId}', 'HomeController@checkoutPolygon');
+Route::post('/store','AnimalsController@store');
+Route::get('/search','HomeController@search');
