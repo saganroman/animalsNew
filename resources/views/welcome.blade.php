@@ -68,7 +68,24 @@
                     shapes[i].setMap(null);
                 }
             }
+            function markersShow(str) {
+                var obj = JSON.parse(str);
+                for (var i = 0; i < obj.length; i++) {
+                    this.name = obj[i]["name"];
+                    this.species = obj[i]["species_id"];
+                    this.breed = obj[i]["breed_id"];
+                    this.content = obj[i]["content"];
+                    this.photo = '{!!URL::asset('images')!!}/' + obj[i]["photo"];
+                    this.photo_s = '{!!URL::asset('images')!!}/s_' + obj[i]["photo"];
+                    this.position = obj[i]["LatLn"];
+                    this.coordinates = position.split(',');
+                    this.Lat = +coordinates[0].trim();
+                    this.Lng = +coordinates[1].trim();
 
+                    var animalObject = new Animal(this.name, this.species, this.breed, this.content, this.photo, this.photo_s, this.Lat, this.Lng);
+                    animalObject.draw();
+                }
+            }
             function Graphics(name, species, breed, content, photo, photo_s, Lat, Lng) {
                 this.name = name;
                 this.species = species;
@@ -120,6 +137,16 @@
                     position: google.maps.ControlPosition.LEFT_BOTTOM
                 },
             });
+
+            $.ajax({
+                type: "GET",
+                url: "/getAnimals",
+                cache: false,
+                success: function (responce) {
+                    markersShow(responce);
+
+                }
+            });
             // cteate Drawing Manager and show it in center
             var drawingManager = new google.maps.drawing.DrawingManager({
                 map: map,
@@ -134,35 +161,9 @@
                 }
             });
 
-            $.ajax({
-                type: "GET",
-                url: "/getAnimals",
-                cache: false,
-                success: function (responce) {
 
-                    markersShow(responce);
 
-                }
-            });
 
-            function markersShow(str) {
-                var obj = JSON.parse(str);
-                for (var i = 0; i < obj.length; i++) {
-                    this.name = obj[i]["name"];
-                    this.species = obj[i]["species_id"];
-                    this.breed = obj[i]["breed_id"];
-                    this.content = obj[i]["content"];
-                    this.photo = '{!!URL::asset('images')!!}/' + obj[i]["photo"];
-                    this.photo_s = '{!!URL::asset('images')!!}/s_' + obj[i]["photo"];
-                    this.position = obj[i]["LatLn"];
-                    this.coordinates = position.split(',');
-                    this.Lat = +coordinates[0].trim();
-                    this.Lng = +coordinates[1].trim();
-
-                    var animalObject = new Animal(this.name, this.species, this.breed, this.content, this.photo, this.photo_s, this.Lat, this.Lng);
-                    animalObject.draw();
-                }
-            }
 
 
             $("#InSpecies").change(function () {

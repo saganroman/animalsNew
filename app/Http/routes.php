@@ -22,6 +22,7 @@ Route::get('/contacts', 'HomeController@getContact');
 Route::get('/portfolio', 'HomeController@getPortfolio');
 Route::get('/getBreed/{id}', 'HomeController@getBreed');
 Route::get('/getBreedPort/{id}', 'HomeController@getBreedPort');
+Route::get('/getAnimals', 'HomeController@getAnimals');
 Route::get('/getAnimalsBySpecies/{id}', 'HomeController@getAnimalsBySpecies');
 Route::get('/getAnimalsByBreed/{sId}/{bId}', 'HomeController@getAnimalsByBreed');
 Route::get('/checkoutCircle/{center}/{radius}/{sId}/{bId}', 'HomeController@checkoutCircle');
