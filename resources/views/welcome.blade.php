@@ -68,41 +68,39 @@
                     shapes[i].setMap(null);
                 }
             }
+
             function markersShow(str) {
                 var obj = JSON.parse(str);
                 for (var i = 0; i < obj.length; i++) {
-                    this.name = obj[i]["name"];
-                    this.species = obj[i]["species_id"];
-                    this.breed = obj[i]["breed_id"];
-                    this.content = obj[i]["content"];
-                    this.photo = '{!!URL::asset('images')!!}/' + obj[i]["photo"];
-                    this.photo_s = '{!!URL::asset('images')!!}/s_' + obj[i]["photo"];
-                    this.position = obj[i]["LatLn"];
-                    this.coordinates = position.split(',');
-                    this.Lat = +coordinates[0].trim();
-                    this.Lng = +coordinates[1].trim();
+                    var name = obj[i]["name"];
+                    var species = obj[i]["species_id"];
+                    var breed = obj[i]["breed_id"];
+                    var content = obj[i]["content"];
+                    var photo = '{!!URL::asset('images')!!}/' + obj[i]["photo"];
+                    var photo_s = '{!!URL::asset('images')!!}/s_' + obj[i]["photo"];
+                    var position = obj[i]["LatLn"];
+                    var coordinates = position.split(',');
+                    var Lat = +coordinates[0].trim();
+                    var Lng = +coordinates[1].trim();
 
-                    var animalObject = new Animal(this.name, this.species, this.breed, this.content, this.photo, this.photo_s, this.Lat, this.Lng);
-                    animalObject.draw();
+                    var animalObject = new Animal(name, species, breed, content, photo, photo_s, Lat, Lng);
+                    markers.push(animalObject.draw());
+                    animalObject.getInfoWindowContent();
                 }
             }
 
-            function Graphics(name, species, breed, content, photo, photo_s, Lat, Lng) {
+            function Graphics(name) {
                 this.name = name;
-                this.species = species;
-                this.breed = breed;
-                this.content = content;
-                this.photo = photo;
-                this.photo_s = photo_s;
-                this.Lat = Lat;
-                this.Lng = Lng;
-            };
 
+            };
+            Graphics.prototype.getInfoWindowContent = function () {
+                console.log('123');
+            }
             Graphics.prototype.draw = function () {
-                var infowindow = new google.maps.InfoWindow({
+               /* var infowindow = new google.maps.InfoWindow({
                     content: "<div><img src=\"" + this.photo + "\"><p><b>Кличка -</b>" + this.name + "</p>  <p> Вид-" + this.species + " <br> Порода- " + this.breed + "  </p> " + this.content + " </div>",
                     maxWidth: 200,
-                });
+                });*/
                 var image = {
                     url: this.photo_s,
                     origin: new google.maps.Point(0, 0),
@@ -114,21 +112,36 @@
                     icon: image,
                     title: this.name,
                 });
-                markers.push(marker);
-                marker.addListener('click', function () {
-                    infowindow.open(map, marker);
-                });
 
+                var infWindow=this.getInfoWindowContent();
+                 marker.addListener('click', function () {
+                     infWindow.open(map, marker);
+                 });
+                return marker;
             };
 
 
             function Animal(name, species, breed, content, photo, photo_s, Lat, Lng) {
+                this.species = species;
+                this.breed = breed;
+                this.content = content;
+                this.photo = photo;
+                this.photo_s = photo_s;
+                this.Lat = Lat;
+                this.Lng = Lng;
+                Graphics.call(this, name);
 
-                Graphics.call(this, name, species, breed, content, photo, photo_s, Lat, Lng);
             };
 
             Animal.prototype = new Graphics();
+            Animal.prototype.getInfoWindowContent = function () {
+                var infowindow = new google.maps.InfoWindow({
+                    content: "<div><img src=\"" + this.photo + "\"><p><b>Кличка -</b>" + this.name + "</p>  <p> Вид-" + this.species + " <br> Порода- " + this.breed + "  </p> " + this.content + " </div>",
+                    maxWidth: 200,
+                });
+               return infowindow;
 
+            }
 
             var map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 12,
@@ -163,10 +176,6 @@
             });
 
 
-
-
-
-
             $("#InSpecies").change(function () {
                 clearShapes();
                 var speciesId = $("#InSpecies").val();
@@ -185,7 +194,7 @@
                     url: "/getAnimalsBySpecies/" + speciesId,
                     cache: false,
                     success: function (responce) {
-                      markersShow(responce);
+                        markersShow(responce);
                     }
                 });
 
