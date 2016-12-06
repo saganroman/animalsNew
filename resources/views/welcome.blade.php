@@ -68,7 +68,7 @@
                     shapes[i].setMap(null);
                 }
             }
-
+//function for processing received data and display it on uor map
             function markersShow(str) {
                 var obj = JSON.parse(str);
                 for (var i = 0; i < obj.length; i++) {
@@ -85,10 +85,9 @@
 
                     var animalObject = new Animal(name, species, breed, content, photo, photo_s, Lat, Lng);
                     markers.push(animalObject.draw());
-                    //animalObject.getInfoWindowContent();
                 }
             }
-
+// Main Class with its properties and methods
             function Graphics(name) {
                 this.name = name;
 
@@ -97,10 +96,7 @@
                 console.log('123');
             }
             Graphics.prototype.draw = function () {
-               /* var infowindow = new google.maps.InfoWindow({
-                    content: "<div><img src=\"" + this.photo + "\"><p><b>Кличка -</b>" + this.name + "</p>  <p> Вид-" + this.species + " <br> Порода- " + this.breed + "  </p> " + this.content + " </div>",
-                    maxWidth: 200,
-                });*/
+
                 var image = {
                     url: this.photo_s,
                     origin: new google.maps.Point(0, 0),
@@ -120,7 +116,7 @@
                 return marker;
             };
 
-
+//Chield Class
             function Animal(name, species, breed, content, photo, photo_s, Lat, Lng) {
                 this.species = species;
                 this.breed = breed;
@@ -151,7 +147,7 @@
                     position: google.maps.ControlPosition.LEFT_BOTTOM
                 },
             });
-
+//get data when load main page
             $.ajax({
                 type: "GET",
                 url: "/getAnimals",
@@ -161,7 +157,7 @@
 
                 }
             });
-            // cteate Drawing Manager and show it in center
+// cteate Drawing Manager and show it in center
             var drawingManager = new google.maps.drawing.DrawingManager({
                 map: map,
                 drawingMode: google.maps.drawing.OverlayType.circle,
@@ -175,7 +171,7 @@
                 }
             });
 
-
+//get data for our filters
             $("#InSpecies").change(function () {
                 clearShapes();
                 var speciesId = $("#InSpecies").val();
@@ -189,6 +185,7 @@
                         $("#InBreed").html(responce);
                     }
                 });
+//get data according our filters and display it
                 $.ajax({
                     type: "GET",
                     url: "/getAnimalsBySpecies/" + speciesId,
@@ -215,7 +212,7 @@
                     }
                 });
             })
-
+//processing drawing manager events
             google.maps.event.addListener(drawingManager, 'circlecomplete', function (circle) {
                 center = circle.getCenter();
                 radius = circle.getRadius();
