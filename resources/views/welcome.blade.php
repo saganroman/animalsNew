@@ -85,7 +85,7 @@
 
                     var animalObject = new Animal(name, species, breed, content, photo, photo_s, Lat, Lng);
                     markers.push(animalObject.draw());
-                    animalObject.getInfoWindowContent();
+                    //animalObject.getInfoWindowContent();
                 }
             }
 
