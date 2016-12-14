@@ -20,11 +20,12 @@ class HomeController extends Controller
     public function index()
     {
         $species = Species::all();
-       // $animals = Animals::all()->toJson();
+        // $animals = Animals::all()->toJson();
         // print_r($animals);
         //return view('welcome')->withAnimals($animals)->withSpecies($species);
         return view('welcome')->withSpecies($species);
     }
+
     public function getAnimals()
     {
         $animals = Animals::all()->toJson();
@@ -36,6 +37,12 @@ class HomeController extends Controller
     public function getContact()
     {
         return view('contacts');
+    }
+
+    public function getAdmin()
+    {
+        $animals = Animals::paginate(15);
+        return view('admin')->withAnimals($animals);
     }
 
 

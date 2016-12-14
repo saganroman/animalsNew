@@ -11,13 +11,17 @@
 |
 */
 
-Route::get('/', function () {
+/*Route::get('/', function () {
     return view('welcome');
-});
+});*/
 
 Route::auth();
 
 Route::get('/', 'HomeController@index');
+Route::get('/admin', 'HomeController@getAdmin');
+Route::get('/editAnimal/{id}', 'AnimalsController@edit');
+Route::get('/updateAnimal/{id}', 'AnimalsController@update');
+Route::get('/deleteAnimal/{id}', 'AnimalsController@destroy');
 Route::get('/contacts', 'HomeController@getContact');
 Route::get('/portfolio', 'HomeController@getPortfolio');
 Route::get('/getBreed/{id}', 'HomeController@getBreed');
